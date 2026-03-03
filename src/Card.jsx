@@ -37,47 +37,64 @@ const Card = ({ title, description, form_fields, modelEndpoint }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const buildPayload = () => {
+    const processedData = {};
+    form_fields.forEach(field => {
+      const fieldId = field.name.toLowerCase().replace(/\s+/g, '_');
+      processedData[fieldId] = field.type === 'number' ?
+        parseFloat(formData[fieldId]) :
+        formData[fieldId];
+    });
+    return processedData;
+  };
+
+  const handleSubmit = async (e, testMode = false) => {
     e.preventDefault();
-    if (!validateForm()) return;
-    
+    if (!testMode && !validateForm()) return;
+
     setIsLoading(true);
     setPrediction(null);
 
     try {
-      // Convert form data to backend format
-      const processedData = {};
-      form_fields.forEach(field => {
-        const fieldId = field.name.toLowerCase().replace(/\s+/g, '_');
-        processedData[fieldId] = field.type === 'number' ? 
-          parseFloat(formData[fieldId]) : 
-          formData[fieldId];
-      });
+      const payload = buildPayload();
+      if (testMode) payload._test = true;
 
       const response = await fetch(`http://localhost:5000/predict/${modelEndpoint}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(processedData)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        throw new Error('Server response was not ok');
-      }
+      if (!response.ok) throw new Error('Server response was not ok');
 
       const result = await response.json();
-      console.log("Received result:", result);  // Debug log
-      
       if (result.error) {
-        console.log("Setting error prediction:", result.error);  // Debug log
         setPrediction(`Error: ${result.error}`);
       } else {
-        console.log("Setting success prediction:", result.result);  // Debug log
         setPrediction(result.result);
       }
     } catch (error) {
       console.error('Error making prediction:', error);
+      setPrediction('Error: Could not make prediction. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleTestConnection = async () => {
+    setIsLoading(true);
+    setPrediction(null);
+    try {
+      const response = await fetch(`http://localhost:5000/predict/${modelEndpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _test: true }),
+      });
+      if (!response.ok) throw new Error('Server response was not ok');
+      const result = await response.json();
+      if (result.error) setPrediction(`Error: ${result.error}`);
+      else setPrediction(result.result);
+    } catch (err) {
       setPrediction('Error: Could not make prediction. Please try again.');
     } finally {
       setIsLoading(false);
@@ -150,10 +167,19 @@ const Card = ({ title, description, form_fields, modelEndpoint }) => {
       
       {isExpanded && (
         <div className="card-form">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={(e) => handleSubmit(e, false)}>
             {form_fields.map(field => renderFormField(field))}
-            <button 
-              type="submit" 
+            <button
+              type="button"
+              className="submit-button"
+              onClick={handleTestConnection}
+              disabled={isLoading}
+              title="Verify backend connection (no Gemini call)"
+            >
+              {isLoading ? 'Processing...' : 'Test connection'}
+            </button>
+            <button
+              type="submit"
               className="submit-button"
               disabled={isLoading}
             >

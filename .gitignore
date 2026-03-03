@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 server/config.env
+server/.env
+venv/
 
 # Editor directories and files
 .vscode/*
@@ -20,6 +22,6 @@ server/config.env
 .DS_Store
 *.suo
 *.ntvs*
-*.njsproj
-*.sln
-*.sw?
+.njsproj
+.sln
+.sw?

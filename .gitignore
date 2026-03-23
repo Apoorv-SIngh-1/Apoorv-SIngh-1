@@ -25,3 +25,5 @@ venv/
 .njsproj
 .sln
 .sw?
+
+./models/brain_tumor_model.h5

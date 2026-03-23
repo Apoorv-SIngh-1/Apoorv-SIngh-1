@@ -1,0 +1,19 @@
+EXPECTED FEATURES: ['id' 'Gender' 'Age' 'Height' 'Weight' 'family_history_with_overweight'
+ 'FAVC' 'FCVC' 'NCP' 'CAEC' 'SMOKE' 'CH2O' 'SCC' 'FAF' 'TUE' 'CALC'
+ 'MTRANS']
+
+PREPROCESSOR TRANSFORMERS:
+Name: num
+Columns: ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
+Steps: dict_keys(['scaler'])
+Name: cat
+Columns: ['Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE', 'SCC', 'CALC', 'MTRANS']
+Steps: dict_keys(['onehot'])
+Categories: [array(['Female', 'Male'], dtype=object), array(['no', 'yes'], dtype=object), array(['no', 'yes'], dtype=object), array(['Always', 'Frequently', 'Sometimes', 'no'], dtype=object), array(['no', 'yes'], dtype=object), array(['no', 'yes'], dtype=object), array(['Frequently', 'Sometimes', 'no'], dtype=object), array(['Automobile', 'Bike', 'Motorbike', 'Public_Transportation',
+       'Walking'], dtype=object)]
+Name: remainder
+Columns: [0]
+
+Dummy Predict Error (strings): could not convert string to float: ''
+
+Dummy Predict Error (ints): ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''

@@ -61,7 +61,7 @@ try:
 }
 
     model = genai.GenerativeModel(
-    model_name="gemini-2.5-pro",
+    model_name="gemini-2.5-flash",
     generation_config=generation_config,
     )
 
@@ -70,7 +70,7 @@ try:
     )
 
     model_2 = genai.GenerativeModel(
-    model_name="gemini-2.5-pro",
+    model_name="gemini-2.5-flash",
     generation_config=generation_config,
     )
 
@@ -79,7 +79,7 @@ try:
     )
 
     model_3 = genai.GenerativeModel(
-    model_name="gemini-2.5-pro",
+    model_name="gemini-2.5-flash",
     generation_config=generation_config,
     )
 
@@ -128,7 +128,7 @@ def analyze_medical_data(data, condition_type):
             prompt = f"Predict heart disease risk for: {data_str}"
         elif condition_type == "obesity":
             # Obesity model has empty system instructions, so we must be explicit
-            prompt = f"Predict the obesity level based on this patient data: {data_str}. Return a JSON with key 'response'."
+            prompt = f"Predict the obesity level based on this patient data: {data_str}."
         else:
             return {"error": "Invalid condition type"}, 400
 
@@ -203,7 +203,7 @@ def health_check():
     """
     Simple health check endpoint
     """
-    return jsonify({"status": "healthy", "model": "gemini-2.5-pro"}), 200
+    return jsonify({"status": "healthy", "model": "gemini-2.5-flash"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000) 
